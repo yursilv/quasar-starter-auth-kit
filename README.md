@@ -1,2 +1,2 @@
-# quasar-token-auth
-Token based authentification for Quasar and Koa.js
+# quasar-starter-auth-kit
+Token based authentification starter kit for Quasar and Koa.js
