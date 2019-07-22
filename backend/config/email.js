@@ -1,0 +1,12 @@
+const BaseConfig = require('../core/BaseConfig')
+
+class EmailConfig extends BaseConfig {
+  constructor () {
+    super()
+    this.mailgunApiKey = this.set('MAILGUN_API_KEY', this.joi.string())
+    this.mailgunDomain = this.set('MAILGUN_DOMAIN', this.joi.string().min(30).max(100).required())
+    this.from = this.set('EMAIL_FROM', this.joi.string().min(10).max(100).required())
+  }
+}
+
+module.exports = new EmailConfig()
