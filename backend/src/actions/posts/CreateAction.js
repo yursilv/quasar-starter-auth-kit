@@ -6,7 +6,7 @@ class CreateAction extends BaseAction {
     return 'posts:create'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       title: this.joi.string().min(3).max(20).required(),
       content: this.joi.string().min(3).max(5000)

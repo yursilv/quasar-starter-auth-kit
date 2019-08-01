@@ -18,17 +18,6 @@ class BaseAction {
       schema: joi.boolean()
     }
   }
-
-  static response (response) {
-    return {
-      ...(response.headers && { headers: response.headers }),
-      status: response.status || 200,
-      body: {
-        success: true,
-        ...response.body
-      }
-    }
-  }
 }
 
 module.exports = BaseAction

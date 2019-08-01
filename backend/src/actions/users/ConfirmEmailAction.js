@@ -10,7 +10,7 @@ class ConfirmEmailAction extends BaseAction {
     return 'users:confirm-email'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       emailConfirmToken: this.joi.string().required()
     })

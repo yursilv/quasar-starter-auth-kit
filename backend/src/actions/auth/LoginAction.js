@@ -1,42 +1,54 @@
-const addSession = require('./shared/addSession')
 const BaseAction = require('../BaseAction')
 const UserDAO = require('../../dao/UserDAO')
-const SessionEntity = require('../../entities/SessionEntity')
-const { checkPasswordService, makeAccessTokenService } = require('../../services/auth')
+const TokenDAO = require('../../dao/TokenDAO')
+const { checkPasswordService, makeAuthTokenService } = require('../../services/auth')
+
+const maxTokensCount = require('../../config').constants.maxTokensCount
 
 class LoginAction extends BaseAction {
   static get accessTag () {
     return 'auth:login'
   }
 
-  static get validationRules () {
-    this.joi.object({
-      password: this.joi.string().required(),
-      username: this.joi.string().min(3).max(25).required(),
-      email: this.joi.string().email().min(6).max(30).required(),
-      fingerprint: this.joi.string().max(200).required() // https://github.com/Valve/fingerprintjs2
-    }).or('username', 'email')
+  static get requestRules () {
+    return this.joi.object({
+      body: this.joi.object({
+        user: this.joi.object({
+          password: this.joi.string().required(),
+          username: this.joi.string().min(3).max(25),
+          email: this.joi.string().email().min(6).max(30),
+          clientFingerprint: this.joi.string().max(200).required() // https://github.com/Valve/fingerprintjs2
+        }).or('username', 'email')
+      })
+    })
   }
 
-  static async run (data) {
-    const user = await UserDAO.getByEmail(data.email)
-    await checkPasswordService(data.password, user.passwordHash)
+  static async run (request) {
+    let user
+    if (request.body.user.email) {
+      user = await UserDAO.getWhere({ email: request.body.user.email })
+    } else {
+      user = await UserDAO.getWhere({ username: request.body.user.username })
+    }
+    await checkPasswordService(request.body.user.password, user.passwordHash)
 
-    const newSession = new SessionEntity({
+    const existingTokensCount = await TokenDAO.getCountWhere({ userId: user.id })
+    if (existingTokensCount === maxTokensCount) {
+      await TokenDAO.removeWhere({ userId: user.id })
+    }
+
+    const tokenDB = await TokenDAO.create({
       userId: user.id,
-      ip: data.ip,
-      ua: data.headers['User-Agent'],
-      fingerprint: data.fingerprint
+      clientFingerprint: request.body.user.clientFingerprint
     })
 
-    await addSession(newSession)
+    const tokenPayload = { clientFingerprint: tokenDB.clientFingerprint, uuid: tokenDB.uuid }
+    const tokenOptions = { subject: user.id.toString() }
 
-    return this.result({
-      data: {
-        accessToken: await makeAccessTokenService(user),
-        refreshToken: newSession.refreshToken
-      }
-    })
+    const token = await makeAuthTokenService(tokenPayload, tokenOptions)
+
+    const response = { body: { data: { token: token } } }
+    return response
   }
 }
 

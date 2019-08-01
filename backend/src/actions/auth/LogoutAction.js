@@ -6,7 +6,7 @@ class LogoutAction extends BaseAction {
     return 'auth:logout'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       refreshToken: this.joi.string().required()
     })

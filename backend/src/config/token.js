@@ -5,24 +5,21 @@ class TokenConfig extends BaseConfig {
   constructor () {
     super()
 
-    this.jwtIss = this.set('JWT_ISS', this.joi.string().required())
+    this.jwtIssuer = this.set('JWT_ISSUER', this.joi.string().required())
 
-    this.access = {
-      type: 'TOKEN_TYPE_ACCESS',
-      secret: this.set('TOKEN_ACCESS_SECRET', this.joi.string().min(30).max(100).required()),
-      expiresIn: this.set('TOKEN_ACCESS_EXP', this.joi.string().regex(expiresInRegexp).required()),
+    this.auth = {
+      type: 'TOKEN_TYPE_AUTH',
+      secret: this.set('TOKEN_AUTH_SECRET', this.joi.string().min(30).max(100).required()),
+      refreshExpiresInDays: this.set('TOKEN_AUTH_REFRESH_EXP_DAYS', this.joi.number().required()),
+      expiresIn: this.set('TOKEN_AUTH_ACCESS_EXP', this.joi.string().regex(expiresInRegexp).required()),
       toString () {
         return JSON.stringify({
           type: this.type,
           secret: `${this.secret.substr(0, 1)}****${this.secret.substr(this.secret.length - 1)}`,
+          refreshExpiresInDays: this.refreshExpiresInDays,
           expiresIn: this.expiresIn
         })
       }
-    }
-
-    this.refresh = {
-      type: 'TOKEN_TYPE_REFRESH',
-      expiresIn: this.set('TOKEN_REFRESH_EXP', this.joi.string().regex(expiresInRegexp).required())
     }
 
     this.resetPassword = {

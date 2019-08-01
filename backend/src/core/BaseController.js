@@ -3,8 +3,8 @@ const JoiToJsonSchema = require('joi-to-json-schema')
 const { checkAccessByTagService } = require('../services/security')
 
 class BaseController {
-  validate (ctx, rules) {
-    const result = joi.validate(ctx.request.body, rules)
+  validate (ctx, requestRules) {
+    const result = joi.validate(ctx.request, requestRules, { allowUnknown: true })
     if (result.error) {
       throw result.error
     }
@@ -18,27 +18,33 @@ class BaseController {
 
       // return request schema
       if (ctx.request.query.schema) {
-        const schema = JoiToJsonSchema(joi.object().keys(action.validationRules))
-        this.success(ctx, { data: schema })
+        const schema = JoiToJsonSchema(joi.object().keys(action.requestRules))
+        this.success(ctx, { body: { data: schema } })
       }
 
       // check access to action by access tag
       await checkAccessByTagService(action.accessTag, ctx.state.currentUser)
 
       // validate action's input data
-      if (action.validationRules) {
-        this.validate(ctx, action.validationRules)
+      if (action.requestRules) {
+        this.validate(ctx, action.requestRules)
       }
 
       // fire action
       const response = await action.run(ctx.request)
-
-      ctx.set(response.headers)
-      ctx.response.body = response.body
-      ctx.response.status = response.status
+      this.success(ctx, response)
 
       await next()
     }
+  }
+
+  success (ctx, response) {
+    response.body = {
+      success: true,
+      ...response.body
+    }
+    response.status = response.status || 200
+    Object.assign(ctx.response, response)
   }
 }
 

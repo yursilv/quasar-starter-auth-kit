@@ -8,16 +8,17 @@ exports.up = (knex, Promise) => {
       table.string('username', 25).unique().notNull()
       table.string('name', 50)
       table.string('role').defaultTo(roles.user).notNull()
-      table.string('email', 50).unique().notNull()
       table.string('location', 300)
+
+      table.string('email', 50).unique().notNull()
       table.boolean('isEmailConfirmed').defaultTo(false)
       table.text('emailConfirmToken')
-
-      table.text('passwordHash').notNull()
       table.text('resetEmailToken')
 
-      table.timestamp('createdAt', { useTz: false }).defaultTo(knex.fn.now()).notNull()
-      table.timestamp('updatedAt', { useTz: false }).defaultTo(knex.fn.now()).notNull()
+      table.text('passwordHash').notNull()
+
+      table.timestamp('createdAt', { useTz: true }).defaultTo(knex.fn.now()).notNull()
+      table.timestamp('updatedAt', { useTz: true }).defaultTo(knex.fn.now()).notNull()
     })
 }
 

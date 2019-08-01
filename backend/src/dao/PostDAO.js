@@ -7,16 +7,6 @@ class PostDAO extends BaseDAO {
 
   /**
    * ------------------------------
-   * @HOOKS
-   * ------------------------------
-   */
-  $formatJson (json) {
-    json = super.$formatJson(json)
-    return json
-  }
-
-  /**
-   * ------------------------------
    * @METHODS
    * ------------------------------
    */

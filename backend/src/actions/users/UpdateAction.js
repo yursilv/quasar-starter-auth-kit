@@ -6,7 +6,7 @@ class UpdateAction extends BaseAction {
     return 'users:update'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       name: this.joi.string().min(3).max(50),
       location: this.joi.string().min(3).max(300)

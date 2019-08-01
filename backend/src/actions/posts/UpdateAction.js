@@ -7,7 +7,7 @@ class UpdateAction extends BaseAction {
     return 'posts:update'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       title: this.joi.string().min(3).max(20),
       content: this.joi.string().min(3).max(5000)

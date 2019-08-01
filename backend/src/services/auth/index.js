@@ -1,6 +1,6 @@
 const checkPasswordService = require('./checkPasswordService')
 const makePasswordHashService = require('./makePasswordHashService')
-const makeAccessTokenService = require('./makeAccessTokenService')
+const makeAuthTokenService = require('./makeAuthTokenService')
 const makeResetEmailTokenService = require('./makeResetEmailTokenService')
 const makeEmailConfirmTokenService = require('./makeEmailConfirmTokenService')
 const parseTokenService = require('./parseTokenService')
@@ -10,7 +10,7 @@ const verifySession = require('./verifySession')
 module.exports = {
   checkPasswordService,
   makePasswordHashService,
-  makeAccessTokenService,
+  makeAuthTokenService,
   makeResetEmailTokenService,
   makeEmailConfirmTokenService,
   parseTokenService,

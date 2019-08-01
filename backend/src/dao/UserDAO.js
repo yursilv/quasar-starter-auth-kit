@@ -5,10 +5,6 @@ class UserDAO extends BaseDAO {
     return 'users'
   }
 
-  static get jsonAttributes () {
-    return ['refreshTokensMap']
-  }
-
   static get relationMappings () {
     return {
       posts: {
@@ -17,6 +13,15 @@ class UserDAO extends BaseDAO {
         join: {
           from: 'users.id',
           to: 'posts.userId'
+        }
+      },
+
+      tokens: {
+        relation: BaseDAO.HasManyRelation,
+        modelClass: `${__dirname}/TokenDAO`,
+        join: {
+          from: 'users.id',
+          to: 'validTokens.userId'
         }
       }
     }
@@ -27,13 +32,10 @@ class UserDAO extends BaseDAO {
    * @HOOKS
    * ------------------------------
    */
+
   $formatJson (json) {
     json = super.$formatJson(json)
-
     delete json.passwordHash
-    delete json.tokenReset
-    delete json.avatar
-
     return json
   }
 
@@ -42,16 +44,6 @@ class UserDAO extends BaseDAO {
    * @METHODS
    * ------------------------------
    */
-
-  static create (data) {
-    return this.query().insert(data)
-  };
-
-  static async getByEmail (email) {
-    const data = await this.query().where({ email }).first()
-    if (!data) throw this.errorEmptyResponse()
-    return data
-  }
 
   /**
    * @description check email availability in DB.

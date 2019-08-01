@@ -6,7 +6,7 @@ class ListAction extends BaseAction {
     return 'posts:list'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     return {
       query: this.joi.object({
         ...this.baseQueryParams,

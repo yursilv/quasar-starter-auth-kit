@@ -16,7 +16,7 @@ class ResetPasswordAction extends BaseAction {
     return 'users:reset-password'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       resetPasswordToken: this.joi.string().required(),
       password: this.joi.string().required()

@@ -32,11 +32,10 @@ module.exports = async function runServer () {
       middlewares,
       errorMiddleware
     })
-    __logger.trace('Server initialized...', { port: config.app.port, host: config.app.host })
+    __logger.info('Server initialized...', { port: config.app.port, host: config.app.host })
     __logger.info('--- Configs ---')
     __logger.info('App config:', config.app)
-    __logger.info('Refresh token:', config.token.refresh)
-    __logger.info('Access token:', config.token.access.toString())
+    __logger.info('Auth token:', config.token.auth.toString())
     __logger.info('Reset password token:', config.token.resetPassword.toString())
     __logger.info('Email confirm token:', config.token.emailConfirm.toString())
     __logger.info('Tokens iss:', config.token.jwtIss)
@@ -49,7 +48,6 @@ module.exports = async function runServer () {
     await testDbConnection(knex)
     __logger.info('Database initialized...', knexConfig[process.env.NODE_ENV])
   } catch (error) {
-    console.log(error)
     __logger.error('Database fails to initialize...', error)
   }
   return server

@@ -17,18 +17,15 @@ module.exports = async session => {
 }
 
 async function _isValidSessionsCount (userId) {
-  __typecheck(userId, __type.number, true)
-
   const existingSessionsCount = await SessionDAO.baseGetCount({ userId })
   return existingSessionsCount < MAX_SESSIONS_COUNT
 }
 
 async function _addSession (session) {
   // for better performance store sessions in Redis persistence
-  await SessionDAO.baseCreate(session)
+  await SessionDAO.create(session)
 }
 
 async function _wipeAllUserSessions (userId) {
-  __typecheck(userId, __type.number, true)
   return await SessionDAO.baseRemoveWhere({ userId })
 }

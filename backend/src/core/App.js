@@ -24,9 +24,12 @@ function start ({ port, host, controllers, middlewares }) {
     try {
       await next()
     } catch (err) {
-      console.log(err)
+      __logger.error(err, err.message)
       ctx.status = err.status || 500
-      ctx.body = err.message
+      ctx.body = { success: false }
+      if (ctx.status !== 500) {
+        ctx.body.message = err.message
+      }
     }
   })
 

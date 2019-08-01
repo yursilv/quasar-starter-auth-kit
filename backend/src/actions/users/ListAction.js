@@ -9,7 +9,7 @@ class ListAction extends BaseAction {
     return 'users:list'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     return {
       query: this.joi.object({
         ...this.baseQueryParams,

@@ -3,12 +3,12 @@ const errorCodes = require('../../config/errorCodes')
 
 module.exports = (session, newFingerprint) => {
   __typecheck(session, __type.object, true)
-  __typecheck(session.fingerprint, __type.string, true)
+  __typecheck(session.clientFingerprint, __type.string, true)
   __typecheck(newFingerprint, __type.string, true)
 
   return new Promise((resolve, reject) => {
     const sessionExpiredAt = Number(session.expiredAt)
-    const oldFingerprint = session.fingerprint
+    const oldFingerprint = session.clientFingerprint
     const nowTime = parseInt(new Date().getTime() / 1000)
 
     if (nowTime > sessionExpiredAt) return reject(new ErrorWrapper({ ...errorCodes.TOKEN_EXPIRED }))

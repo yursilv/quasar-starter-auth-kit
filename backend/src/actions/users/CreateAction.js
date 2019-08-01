@@ -8,14 +8,16 @@ class CreateAction extends BaseAction {
     return 'users:create'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     return this.joi.object({
-      user: this.joi.object({
-        name: this.joi.string().min(3).max(50),
-        username: this.joi.string().min(3).max(25).required(),
-        email: this.joi.string().email().min(6).max(30).required(),
-        password: this.joi.string().min(6).max(30).required(),
-        location: this.joi.string().min(3).max(300)
+      body: this.joi.object({
+        user: this.joi.object({
+          name: this.joi.string().min(3).max(50),
+          username: this.joi.string().min(3).max(25).required(),
+          email: this.joi.string().email().min(6).max(30).required(),
+          password: this.joi.string().min(6).max(30).required(),
+          location: this.joi.string().min(3).max(300)
+        })
       })
     })
   }
@@ -23,10 +25,12 @@ class CreateAction extends BaseAction {
   static async run (request) {
     const hash = await makePasswordHashService(request.body.user.password)
     delete request.body.user.password
+
     const user = await UserDAO.create({
       ...request.body.user,
       passwordHash: hash
     })
+
     const emailConfirmToken = await makeEmailConfirmTokenService(user)
     await UserDAO.baseUpdate(user.id, { emailConfirmToken })
 
@@ -37,13 +41,14 @@ class CreateAction extends BaseAction {
         text: `Welcome to supra.com! ${user.name} we just created new account for you. Your login: ${user.email}`
       })
     } catch (error) {
-      __logger.error(error.message, error)
+      __logger.error(error, error.message)
     }
 
-    return this.response({
+    const response = {
       body: { data: { user: user } },
       status: 201
-    })
+    }
+    return response
   }
 }
 

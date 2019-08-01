@@ -11,8 +11,10 @@ class BaseDAO extends Model {
    * ------------------------------
    */
 
-  static errorEmptyResponse () {
-    return new ErrorWrapper({ ...errorCodes.NOT_FOUND, layer: 'DAO' })
+  static errorEmptyResponse (data) {
+    const err = new ErrorWrapper({ ...errorCodes.NOT_FOUND, layer: 'DAO' })
+    err.message = err.message + ': ' + JSON.stringify(data)
+    return err
   }
 
   static emptyPageResponse () {
@@ -66,21 +68,7 @@ class BaseDAO extends Model {
    * ------------------------------
    */
 
-  static baseCreate (entity = {}) {
-    __typecheck(entity, __type.object, true)
-
-    /**
-     * each entity that creates must to have creator id (userId)
-     * except user entity
-     */
-    if (!entity.email && !entity.userId) {
-      throw new ErrorWrapper({
-        ...errorCodes.UNPROCESSABLE_ENTITY,
-        message: 'Please provide in action class \'userId\' field',
-        layer: 'DAO'
-      })
-    }
-
+  static create (entity) {
     return this.query().insert(entity)
   }
 
@@ -105,35 +93,33 @@ class BaseDAO extends Model {
     return data
   }
 
-  static async baseGetCount (filter = {}) {
-    __typecheck(filter, __type.object, true)
-
+  static async getCountWhere (data) {
     const result = await this.query()
-      .where({ ...filter })
+      .where(data)
       .count('*')
       .first()
     if (!result.count) return 0
     return Number(result.count)
   }
 
-  static async baseGetById (id) {
-    __typecheck(id, __type.number, true)
-
-    const data = await this.query().findById(id)
-    if (!data) throw this.errorEmptyResponse()
-    return data
+  static async getById (id) {
+    const res = await this.query().findById(id)
+    if (!res) throw this.errorEmptyResponse(id)
+    return res
   }
 
-  static baseRemove (id) {
-    __typecheck(id, __type.number, true)
+  static async getWhere (data) {
+    const res = await this.query().where(data).first()
+    if (!res) throw this.errorEmptyResponse(data)
+    return res
+  }
 
+  static removeById (id) {
     return this.query().deleteById(id)
   }
 
-  static baseRemoveWhere (where = {}) {
-    __typecheck(where, __type.object, true)
-
-    return this.query().delete().where({ ...where })
+  static removeWhere (data) {
+    return this.query().delete().where(data)
   }
 }
 

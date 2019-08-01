@@ -8,7 +8,7 @@ class ChangePasswordAction extends BaseAction {
     return 'users:change-password'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       oldPassword: this.joi.string().required(),
       newPassword: this.joi.string().required()

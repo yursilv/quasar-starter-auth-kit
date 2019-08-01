@@ -1,5 +1,5 @@
 const { jwtService } = require('../services/auth')
-const SECRET = require('../config').token.access.secret
+const SECRET = require('../config').token.auth.secret
 const errorCodes = require('../config').errorCodes
 const roles = require('../config').roles
 const BaseMiddleware = require('../core/BaseMiddleware')

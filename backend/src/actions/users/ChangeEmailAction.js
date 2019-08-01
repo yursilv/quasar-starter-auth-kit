@@ -8,7 +8,7 @@ class ChangeEmailAction extends BaseAction {
     return 'users:change-email'
   }
 
-  static get validationRules () {
+  static get requestRules () {
     this.joi.object({
       email: this.joi.string().email().min(6).max(30).required()
     })

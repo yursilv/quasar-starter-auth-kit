@@ -8,7 +8,7 @@ class SessionEntity {
   constructor (src = {}) {
     this.refreshToken = uuidV4()
     this.userId = Number(src.userId) || required('userId')
-    this.fingerprint = src.fingerprint || required('fingerprint')
+    this.clientFingerprint = src.clientFingerprint || required('clientFingerprint')
     this.ip = src.ip || required('ip')
     this.os = src.os || null
     this.ua = src.ua || null

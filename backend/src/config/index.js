@@ -6,6 +6,7 @@ const folders = require('./folders')
 const token = require('./token')
 const roles = require('./roles')
 const email = require('./email')
+const constants = require('./constants')
 
 module.exports = {
   app,
@@ -15,5 +16,6 @@ module.exports = {
   token,
   roles,
   email,
-  knexTest
+  knexTest,
+  constants
 }
